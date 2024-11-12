@@ -45,13 +45,13 @@ public class Particle_Simulator extends Canvas {
             Random rand = new Random();
             for (int i = 0; i < 10; i++) {
                 Color randomColor = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-            	simulation.particles.add(new Sand(1.0, 1.0, 2 + (i + 3), 1 + i, x + 50, y + 50, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, randomColor));
+            	simulation.particles.add(new Sand(1.0, 1.0, 2 + (i + 3), 1 + i, x + 50, y + 50, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, randomColor, 5));
             }
 
             // Timer to update and repaint the particle every 16ms (~60 FPS)
             simulation.timer = new Timer(16, e -> {
             	for(Particle particle : simulation.particles) {
-            		particle.update();
+            		particle.update(simulation.particles);
             	}
             	simulation.repaint();
             });
@@ -68,6 +68,7 @@ public class Particle_Simulator extends Canvas {
             g.setColor(particle.color);
             int particleSize = 5; // Define a size for the particle
             g.fillRect((int) particle.getxPosition(), (int) particle.getyPosition(), particleSize, particleSize);
+
         }
 
         // display velocity information for the first particle
