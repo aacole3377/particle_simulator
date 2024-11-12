@@ -1,6 +1,7 @@
 package particle_simulator;
 
 import java.awt.Color;
+import java.util.List;
 
 public abstract class Particle {
 	
@@ -16,6 +17,7 @@ public abstract class Particle {
 	protected int screenWidth;
 	protected int screenHeight;
 	protected Color color; 
+	protected int collisionRadius;
 	
 	/**
 	 * @param mass
@@ -34,7 +36,7 @@ public abstract class Particle {
 	 */
 	
 	public Particle(double mass, double volume, double xVelocity, double yVelocity, double xPosition, double yPosition,
-			double gravity, double friction, double temperature, String state, int screenWidth, int screenHeight, Color color) {
+			double gravity, double friction, double temperature, String state, int screenWidth, int screenHeight, Color color, int radius) {
 		super();
 		this.mass = mass;
 		this.volume = volume;
@@ -49,6 +51,7 @@ public abstract class Particle {
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		this.color = color;
+		this.collisionRadius = radius;
 	}
 	
 	public double getMass() {
@@ -155,7 +158,15 @@ public abstract class Particle {
 		this.color = color;
 	}
 
-	public void update() {
+	public int getCollisionRadius() {
+		return collisionRadius;
+	}
+
+	public void setCollisionRadius(int collisionRadius) {
+		this.collisionRadius = collisionRadius;
+	}
+
+	public void update(List<Particle> particles) {
 		yVelocity += gravity;
 //		xVelocity = 0;
 		
@@ -194,6 +205,17 @@ public abstract class Particle {
 		if (xPosition <= 0) {
 			xVelocity = Math.abs(xVelocity);
 		}
+		
+		
+	}
+	
+	private boolean checkCollision(Particle other) {
+		double dx = this.xPosition - other.xPosition;
+		double dy = this.yPosition - other.yPosition;
+		
+		double distance = Math.sqrt((dx * dx) + (dy * dy));
+		
+		return distance < (this.collisionRadius + other.collisionRadius);
 	}
 	
 	public void getData() {
