@@ -42,6 +42,7 @@ public class Particle_Simulator extends Canvas {
 //            simulation.particles.add(new Sand(1.0, 1.0, -4, 1, x, 0, y + 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.RED));
 //            simulation.particles.add(new Sand(1.0, 1.0, 4, 1, x - 50,y + 0, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.YELLOW));
 //            simulation.particles.add(new Sand(1.0, 1.0, 2, 1, x + 50, y + 50, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.BLUE));
+            
             Random rand = new Random();
             for (int i = 0; i < 10; i++) {
                 Color randomColor = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
