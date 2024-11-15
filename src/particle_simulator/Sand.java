@@ -19,8 +19,24 @@ public class Sand extends Particle{
 	
 	public Sand(double mass, double volume, double xVelocity, double yVelocity, double xPosition, double yPosition,
 			double gravity, double friction, double temperature, String state, int screenWidth, int screenHeight, Color color, int radius) {
-		super(mass, volume, xVelocity, yVelocity, xPosition, yPosition, gravity, friction, temperature, state, screenWidth, screenHeight, color, radius);
+		super(mass, volume, xVelocity, yVelocity, xPosition, yPosition, gravity, friction, temperature, state, screenWidth, screenHeight, Color.YELLOW, radius);
 		// TODO Auto-generated constructor stub
 	}
+	
+	@Override
+	public void handleCollision(Particle particle) {
+		double tXVelocity = this.xVelocity;
+		double tYVelocity = this.yVelocity;
+		
+		this.xVelocity = particle.xVelocity;
+		this.yVelocity = particle.yVelocity;
+		
+		particle.xVelocity = tXVelocity;
+		particle.yVelocity = tYVelocity;
+		
+		
+	}
+	
+	
 
 }

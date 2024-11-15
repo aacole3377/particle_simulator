@@ -2,7 +2,8 @@ package particle_simulator;
 
 import java.awt.*;
 import java.util.List;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -12,6 +13,7 @@ public class Particle_Simulator extends Canvas {
 
     Timer timer;
     Sand particle;
+    boolean isMousePressed = false;
     List<Particle> particles;
 
     public static void main(String[] args) {
@@ -37,27 +39,48 @@ public class Particle_Simulator extends Canvas {
             simulation.particles = new ArrayList<>();
 
             int x = canvasWidth / 2; 
-            int y = 0; 
+            int y = canvasHeight / 2; 
             
-//            simulation.particles.add(new Sand(1.0, 1.0, -4, 1, x, 0, y + 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.RED));
-//            simulation.particles.add(new Sand(1.0, 1.0, 4, 1, x - 50,y + 0, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.YELLOW));
+//            simulation.particles.add(new Sand(1.0, 1.0, -4, 1, x, 0, y + 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.YELLOW, 2));
+//            simulation.particles.add(new Sand(1.0, 1.0, 4, 1, x - 5,y + 0, 1, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.RED, 2));
 //            simulation.particles.add(new Sand(1.0, 1.0, 2, 1, x + 50, y + 50, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, Color.BLUE));
             
             Random rand = new Random();
-            for (int i = 0; i < 10; i++) {
-                Color randomColor = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
-            	simulation.particles.add(new Sand(1.0, 1.0, 2 + (i + 3), 1 + i, x + 50, y + 50, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, randomColor, 5));
-            }
+//            for (int i = 0; i < 5000; i++) {
+//                Color randomColor = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+//                Color teal = new Color(29, 209, 206);
+//            	simulation.particles.add(new Sand(0, 0, 1 + (i + 2), 1, x, y-200, .5, 0.02, 25, "Solid", canvasWidth, canvasHeight, randomColor, 1));
+//            }
 
             // Timer to update and repaint the particle every 16ms (~60 FPS)
             simulation.timer = new Timer(16, e -> {
             	for(Particle particle : simulation.particles) {
             		particle.update(simulation.particles);
             	}
+            	
+            	if (simulation.isMousePressed == true) {
+                	int xPosition = simulation.getMousePosition().x;
+                	int yPosition = simulation.getMousePosition().y;
+                	Color randomColor = new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256));
+                	simulation.particles.add(new Sand(1.0, 1.0, rand.nextDouble() * 2 - 1, rand.nextDouble(), xPosition, yPosition, 0.5, 0.02, 25, "Solid", canvasWidth, canvasHeight, randomColor,3));
+                }            	
             	simulation.repaint();
             });
             simulation.timer.start();
+            
         });
+        
+        simulation.addMouseListener(new MouseAdapter () {
+        	@Override 
+        	public void mousePressed(MouseEvent e) {
+        		simulation.isMousePressed = true;
+        	}
+        	@Override
+        	public void mouseReleased(MouseEvent e) {
+        		simulation.isMousePressed = false;
+        	}
+        });
+        
     }
 
     @Override
@@ -67,8 +90,10 @@ public class Particle_Simulator extends Canvas {
 
         for (Particle particle : particles) {
             g.setColor(particle.color);
-            int particleSize = 5; // Define a size for the particle
-            g.fillRect((int) particle.getxPosition(), (int) particle.getyPosition(), particleSize, particleSize);
+            int particleSize =5; // Define a size for the particle
+//            g.fillRect((int) particle.getxPosition(), (int) particle.getyPosition(), particleSize, particleSize);
+            g.fillOval((int) particle.getxPosition(), (int) particle.getyPosition(), particleSize, particleSize);
+            
 
         }
 
@@ -76,8 +101,8 @@ public class Particle_Simulator extends Canvas {
         if (!particles.isEmpty()) {
             Particle particle = particles.get(0);
             g.setColor(Color.WHITE);
-            String velocityInfo = String.format("xVelocity: %.2f | yVelocity: %.2f | xPosition: %.2f | yPosition: %.2f",
-                    particle.getxVelocity(), particle.getyVelocity(), particle.getxPosition(), particle.getyPosition());
+            String velocityInfo = String.format("xVelocity: %.2f | yVelocity: %.2f | xPosition: %.2f | yPosition: %.2f | Color: %s",
+                    particle.getxVelocity(), particle.getyVelocity(), particle.getxPosition(), particle.getyPosition(), particle.getColor());
             g.drawString(velocityInfo, 10, 20); // Draw velocity info at the top-left of the screen
         }
     }

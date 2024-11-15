@@ -188,6 +188,7 @@ public abstract class Particle {
 		
 		if (yPosition <= 0) {
 			yVelocity = Math.abs(yVelocity);
+//			yPosition = Math.abs(yPosition);
 		}
 		
 		/**
@@ -206,7 +207,24 @@ public abstract class Particle {
 			xVelocity = Math.abs(xVelocity);
 		}
 		
+//		// Increment RGB values for color-changing effect
+//	    int red = color.getRed();
+//	    int green = color.getGreen();
+//	    int blue = color.getBlue();
+//
+//	    // Adjust each color component slightly (you can tweak these values to change the effect speed)
+//	    red = (red + 4) % 256;   // Loop back to 0 if it exceeds 255
+//	    green = (green + 6) % 256;
+//	    blue = (blue + 8) % 256;
+//
+//	    // Update the particle color
+//	    color = new Color(red, green, blue);
 		
+		for (Particle other : particles) {
+			if (other != this && checkCollision(other)) {
+				handleCollision(other);
+			}
+		}
 	}
 	
 	private boolean checkCollision(Particle other) {
@@ -217,6 +235,43 @@ public abstract class Particle {
 		
 		return distance < (this.collisionRadius + other.collisionRadius);
 	}
+	
+	public void handleCollision(Particle other) {
+	    // Swap velocities (basic elastic collision response)
+	    double tempXVelocity = this.xVelocity;
+	    double tempYVelocity = this.yVelocity;
+	    this.xVelocity = other.xVelocity;
+	    this.yVelocity = other.yVelocity;
+	    other.xVelocity = tempXVelocity;
+	    other.yVelocity = tempYVelocity;
+	    
+	    // Prevent sticking by adjusting positions
+	    double dx = this.xPosition - other.xPosition;
+	    double dy = this.yPosition - other.yPosition;
+	    double distance = Math.sqrt((dx * dx) + (dy * dy));
+	    double overlap = (this.collisionRadius + other.collisionRadius) - distance;
+
+	    this.xPosition += (dx / distance) * (overlap / 2);
+	    this.yPosition += (dy / distance) * (overlap / 2);
+	    other.xPosition -= (dx / distance) * (overlap / 2);
+	    other.yPosition -= (dy / distance) * (overlap / 2);
+	    
+	    // Damping effect
+	    this.xVelocity *= 0.9;
+	    this.yVelocity *= 0.9;
+	    other.xVelocity *= 0.9;
+	    other.yVelocity *= 0.9;
+	    
+	    // Increment RGB values for color-changing effect on collision
+	    int red = (color.getRed() + 15) % 256;
+	    int green = (color.getGreen() + 6) % 256;
+	    int blue = (color.getBlue() + 25) % 256;
+	    color = new Color(red, green, blue);
+	    
+	    // Debug print to confirm color change
+//	    System.out.println("Color after collision: " + color);
+	}
+
 	
 	public void getData() {
 		System.out.printf("X Velocity: %d\nY Velocity: %d", xVelocity, yVelocity);
